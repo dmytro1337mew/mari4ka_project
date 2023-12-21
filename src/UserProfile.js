@@ -1,0 +1,227 @@
+import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import ReactDOM from "react-dom";
+import './components/styles.css';
+import { useAuthContext } from './AuthService';
+import { useSelector } from 'react-redux';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+
+const UserProfile = () => {
+  const accessToken = localStorage.getItem('accessToken');
+  const refreshToken = localStorage.getItem('refreshToken');
+  const CHANGEINFO_URL='https://f5a6-46-219-228-232.ngrok-free.app/api/v1/authorization/update_user/';
+  const [surname, setSurname]=useState('');
+  const [name, setName] = useState("");
+  const [address, setAddress] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone_number, setPhoneNumber] = useState("");
+  const [data, setData] = useState([]);
+  const [ChangeInfo, setChangeInfo] = useState(false);
+  const [password, setPassword]=useState("");
+  const navigate=useNavigate();
+  const handleSaveClick = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.put(CHANGEINFO_URL,
+        { name, email, password, phone_number },
+        {
+          withCredentials: true,
+          baseURL: URL,
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+          
+        }
+      );
+      console.log(response?.data);
+      const updatedResponse = await axios.get('https://f5a6-46-219-228-232.ngrok-free.app/api/v1/authorization/user/',{
+        withCredentials: true,
+        baseURL: URL,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        
+      } )
+      .then(response => {
+        console.log('Профіль користувача:', response.data);
+        setData(response.data)
+  
+      })
+
+
+      setChangeInfo(false);
+      
+    } catch (err) {
+      if (!err?.response) {
+    }
+  }
+}
+  
+
+  useEffect(() => {
+    axios.get('https://f5a6-46-219-228-232.ngrok-free.app/api/v1/authorization/user/',{
+      withCredentials: true,
+      baseURL: URL,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      
+    })
+    .then(response => {
+      console.log('Профіль користувача:', response.data);
+      setData(response.data)
+
+    })
+    .catch(error => {
+      console.error('Помилка при отриманні профілю користувача:', error);
+    });
+  }, []);
+
+
+  const handleEditClick = () => {
+    setChangeInfo(!ChangeInfo);
+  
+    if (!ChangeInfo) {
+      // Заповнити поля введення поточними даними користувача при входженні в режим редагування
+      setName(data.name);
+      setSurname(data.surname);
+      setPhoneNumber(data.phone_number);
+      setEmail(data.email);
+      setAddress(data.address);
+    }
+    
+  };
+  const handleLogout = async () => {
+        
+    // Якщо POST-запит виконано успішно, видаляємо кукіс
+    localStorage.removeItem('email');
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    // Якщо є додаткова логіка для виходу, додайте її тут
+
+    // Перенаправлення користувача на головну сторінку або іншу, де потрібно
+    navigate('/');
+};
+  // const handleLogOut = async () => {
+  //   try {
+  //     console.log(document.cookie);
+  //     deleteCookie('jwt');
+  //     // Виклик POST-запиту
+  //     const response = await axios.post('https://f5a6-46-219-228-232.ngrok-free.app/api/v1/authorization/logout/', {
+  //       withCredentials: true,
+  //       baseURL: URL,
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //     });
+  
+  //     // Якщо POST-запит виконано успішно, видаляємо кукіс
+  //     console.log(response);
+  //   } catch (error) {
+  //     // Обробка помилок при POST-запиті
+  //     console.error('Помилка при вихід з системи:', error);
+  //   }
+  // };
+  const handleCancelClick = () => {
+
+      setChangeInfo(false); // Turn off edit mode after saving changes
+    };
+
+
+  return (
+    <div >
+      <div className="row nav-logout" style={{ display: 'flex', flexDirection: 'row' }}>
+        <nav class="navbar navbar-expand-sm bg-dark navbar-dark ">
+          <div className="row" style={{ display: 'flex', flexDirection: 'row', width: '100%' }}>
+            <div className="col" style={{ paddingTop: '15px', width: '50%', textAlign: 'left', paddingLeft: '40px' }}>
+              <img src="star1.png" alt="star" width="270" height="75" />
+            </div>
+
+            <div className="col" style={{ padding: '25px', width: '40%' }}>
+              <input class="form-control me-2" type="text" style={{ borderRadius: '12px', height: '28px' }} placeholder="пошук посилки.." />
+               <button style={{ height: '18px' }} onClick={handleLogout} >Вихід</button> 
+            </div>
+            <div className='col' style={{ padding: '25px', width: '10%' }}>
+              <img src="support.png" alt="star" width="70" height="60" style={{ borderRadius: '100px' }} ></img>
+            </div>
+
+          </div>
+        </nav>
+      </div>
+
+      <div className="row d-flex justify-content-center" style={{ display: 'flex', flexDirection: 'row' }}>
+        <div className="vertical-menu">
+          <Link to="/myprofile" className="menu-item" style={{ background: 'lightgray' }}>
+            Мій профіль
+          </Link>
+          <Link to="/orders" className="menu-item">
+            Мої замовлення
+          </Link>
+          <Link to="/createdOrder" className="menu-item">
+            Створити посилку
+          </Link>
+          <Link to="/ArchiveOrders" className="menu-item">
+            Архівовані
+          </Link>
+          <Link to="/DeletedOrders" className="menu-item">
+            Видалені
+          </Link>
+        </div>
+        <div className="col user-profile " style={{}}>
+          <div>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png" alt="timer" className="rounded-image" style={{ width: '90px', height: '100px' }} />
+          </div>
+          {ChangeInfo ? (
+              <form onSubmit={handleSaveClick}>
+              <h3>Змінити інформацію профілю:</h3>
+              <strong>Ім'я: </strong>
+              <input type="text" id="name" name="name" value={name} onChange={(e) => setName(e.target.value)}
+              />
+             <br/>
+             <strong>Прізвище: </strong>
+             <input type="text" id="surname" name="surname" value={password} onChange={(e) => setPassword(e.target.value)} />
+             <br/>
+             <strong>Номер телефону: </strong>
+             <input type="text" id="phone_number" name="phone_number" value={phone_number} onChange={(e) => setPhoneNumber(e.target.value)} />
+             <br/>
+             <strong>Електронна скринька: </strong>
+             <input type="email" id="email" name="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+             <br/>
+             <strong>Адреса: </strong>
+             <input type="text" id="address" name="address" value={address} onChange={(e) => setAddress(e.target.value)} />
+             <br/>
+             <button onClick={handleCancelClick} className='button' style={{height:'33px', width:'200px'}}>Скасувати</button>
+             <button type="submit" className='button' style={{height:'33px', width:'200px'}}>Зберегти зміни</button>
+             </form>
+          ) : (
+            
+            <div>
+              <h3>ТВІЙ ПРОФІЛЬ </h3>
+              <div>
+                <h4>{data.name} {data.surname}</h4>
+              </div>
+              <div>
+                <strong>Номер телефону:</strong> {data.phone_number}
+              </div>
+              <br />
+              <div>
+                <strong>Email:</strong> {data.email}
+              </div>
+              <br />
+              <div>
+                <strong>Адреса:</strong> {data.address}
+              </div>
+              <br />
+              <button onClick={handleEditClick}>Change Info</button>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+)};
+
+export default UserProfile;
