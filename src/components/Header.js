@@ -1,10 +1,22 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './styles.css';
 import Login from '../Login';
 
 
 function Header() {
+  const navigate=useNavigate();
+  const handleLogout = async () => {
+        
+    
+    localStorage.removeItem('email');
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    
+
+   
+    navigate('/');
+};
   return (
     <header className="header" >
       <div class="container-fluid mx-auto" >
@@ -15,8 +27,17 @@ function Header() {
           </div>
         
           <div className="col" style={{padding:'25px', width:'40%'}}>
-              <Link to="/login" className="button" style={{height:'15px'}} >Вхід</Link>
-              <Link to="/register" className="button" style={{height:'15px'}} >Реєстрація</Link> 
+          {localStorage.getItem('accessToken') ? (
+  <>
+    <Link to="/myprofile" className="button" style={{ height: '15px' }}>Кабінет</Link>
+    <Link to="/" className="button" style={{ height: '15px' }} onClick={handleLogout}>Вийти</Link>
+  </>
+) : (
+  <>
+    <Link to="/login" className="button" style={{ height: '15px' }}>Вхід</Link>
+    <Link to="/register" className="button" style={{ height: '15px' }}>Реєстрація</Link>
+  </>
+)}
               <input class="form-control me-2" type="text" style={{borderRadius:'12px', height:'25px'}} placeholder="пошук по сайту.."/>
           </div>
            <div className='col'style={{padding:'25px', width:'10%'}}>

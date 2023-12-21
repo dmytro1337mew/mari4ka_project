@@ -5,6 +5,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import axios from 'axios';
 function ArchiveOrders(props) {
+  function isUserAuthenticated() {
+    const accessToken = localStorage.getItem('accessToken');
+    return !!accessToken; 
+  }
+  if (!isUserAuthenticated()) {
+    // Немає токена, перенаправлення на сторінку авторизації
+    window.location.href = '/login';
+  }
   const accessToken = localStorage.getItem('accessToken');
   const refreshToken = localStorage.getItem('refreshToken');
   const navigate = useNavigate();
@@ -13,13 +21,11 @@ function ArchiveOrders(props) {
   };
   const handleLogout = async () => {
         
-    // Якщо POST-запит виконано успішно, видаляємо кукіс
+   
     localStorage.removeItem('email');
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
-    // Якщо є додаткова логіка для виходу, додайте її тут
-
-    // Перенаправлення користувача на головну сторінку або іншу, де потрібно
+ 
     navigate('/');
 };
 const [orders, setOrders]=useState('');
@@ -103,8 +109,8 @@ const [orders, setOrders]=useState('');
           padding: "10px",
           marginBottom: "10px",
           marginTop: "15px",
-          marginRight: "15px", // додано відступ для кращого розташування блоків
-          width: "450px", // ширина блока
+          marginRight: "15px", 
+          width: "450px", 
         }}
       >
           <p><strong>Замовлення було створене: </strong><br></br><br></br>{data.created_at}</p>

@@ -8,6 +8,14 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 
 const UserProfile = () => {
+  function isUserAuthenticated() {
+    const accessToken = localStorage.getItem('accessToken');
+    return !!accessToken; 
+  }
+  if (!isUserAuthenticated()) {
+    // Немає токена, перенаправлення на сторінку авторизації
+    window.location.href = '/login';
+  }
   const accessToken = localStorage.getItem('accessToken');
   const refreshToken = localStorage.getItem('refreshToken');
   const CHANGEINFO_URL='https://f5a6-46-219-228-232.ngrok-free.app/api/v1/authorization/update_user/';
@@ -86,7 +94,7 @@ const UserProfile = () => {
     setChangeInfo(!ChangeInfo);
   
     if (!ChangeInfo) {
-      // Заповнити поля введення поточними даними користувача при входженні в режим редагування
+    
       setName(data.name);
       setSurname(data.surname);
       setPhoneNumber(data.phone_number);
@@ -95,45 +103,31 @@ const UserProfile = () => {
     }
     
   };
+  const handleMain = async () => {
+        
+    navigate('/');
+};
   const handleLogout = async () => {
         
-    // Якщо POST-запит виконано успішно, видаляємо кукіс
+    
     localStorage.removeItem('email');
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
-    // Якщо є додаткова логіка для виходу, додайте її тут
+    
 
-    // Перенаправлення користувача на головну сторінку або іншу, де потрібно
+
     navigate('/');
 };
-  // const handleLogOut = async () => {
-  //   try {
-  //     console.log(document.cookie);
-  //     deleteCookie('jwt');
-  //     // Виклик POST-запиту
-  //     const response = await axios.post('https://f5a6-46-219-228-232.ngrok-free.app/api/v1/authorization/logout/', {
-  //       withCredentials: true,
-  //       baseURL: URL,
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //     });
-  
-  //     // Якщо POST-запит виконано успішно, видаляємо кукіс
-  //     console.log(response);
-  //   } catch (error) {
-  //     // Обробка помилок при POST-запиті
-  //     console.error('Помилка при вихід з системи:', error);
-  //   }
-  // };
+ 
   const handleCancelClick = () => {
 
-      setChangeInfo(false); // Turn off edit mode after saving changes
+      setChangeInfo(false); 
     };
 
 
   return (
     <div >
+      
       <div className="row nav-logout" style={{ display: 'flex', flexDirection: 'row' }}>
         <nav class="navbar navbar-expand-sm bg-dark navbar-dark ">
           <div className="row" style={{ display: 'flex', flexDirection: 'row', width: '100%' }}>
@@ -142,8 +136,8 @@ const UserProfile = () => {
             </div>
 
             <div className="col" style={{ padding: '25px', width: '40%' }}>
-              <input class="form-control me-2" type="text" style={{ borderRadius: '12px', height: '28px' }} placeholder="пошук посилки.." />
-               <button style={{ height: '18px' }} onClick={handleLogout} >Вихід</button> 
+             <button className="button" style={{ height: '50px' }}onClick={handleMain}>Головна сторінка</button>
+               <button className="button" style={{ height: '40px' }} onClick={handleLogout} >Вихід</button> 
             </div>
             <div className='col' style={{ padding: '25px', width: '10%' }}>
               <img src="support.png" alt="star" width="70" height="60" style={{ borderRadius: '100px' }} ></img>
@@ -182,11 +176,11 @@ const UserProfile = () => {
               <input type="text" id="name" name="name" value={name} onChange={(e) => setName(e.target.value)}
               />
              <br/>
-             <strong>Прізвище: </strong>
-             <input type="text" id="surname" name="surname" value={password} onChange={(e) => setPassword(e.target.value)} />
+             <strong>Пароль: </strong>
+             <input type="password" id="password" name="password" value={password} onChange={(e) => setPassword(e.target.value)} />
              <br/>
              <strong>Номер телефону: </strong>
-             <input type="text" id="phone_number" name="phone_number" value={phone_number} onChange={(e) => setPhoneNumber(e.target.value)} />
+             <input type="number" id="phone_number" name="phone_number" value={phone_number} onChange={(e) => setPhoneNumber(e.target.value)} />
              <br/>
              <strong>Електронна скринька: </strong>
              <input type="email" id="email" name="email" value={email} onChange={(e) => setEmail(e.target.value)} />
@@ -216,7 +210,7 @@ const UserProfile = () => {
                 <strong>Адреса:</strong> {data.address}
               </div>
               <br />
-              <button onClick={handleEditClick}>Change Info</button>
+              <button className="button" onClick={handleEditClick}>Change Info</button>
             </div>
           )}
         </div>

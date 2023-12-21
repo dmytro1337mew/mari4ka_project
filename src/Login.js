@@ -13,7 +13,7 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const handleSuccessfulLogin = (accessToken, refreshToken, email) => {
-    // Збереження токенів у localStorage
+   
     localStorage.setItem('accessToken', accessToken);
     localStorage.setItem('email', email);
     localStorage.setItem('refreshToken', refreshToken);
@@ -32,13 +32,13 @@ const Login = () => {
             "Content-Type": "application/json",
           },
           
-        }, // Data should be passed as the second argument
+        }, 
       );
         console.log(response?.data);
   console.log(response?.access);
   console.log(JSON.stringify(response))
         console.log(JSON.stringify(response?.data));
-        //console.log(JSON.stringify(response));
+      
         const accessToken = response?.data?.access;
         const refreshToken = response?.data?.refresh;
         handleSuccessfulLogin(accessToken, refreshToken, email);
@@ -79,24 +79,12 @@ const Login = () => {
                 <button className='button' style={{height:'33px'}}>Увійти</button>
              <p>Не маєте облікового запису? <Link to="/register" className='button' style={{height:'20px'}} >Зареєструватися</Link></p>
            </div>
-           {/* <Link to="/myprofile" className='button'>Увійти</Link> */}
+           
         </div>
         
       </form>
       
-      {/* <div className="login">
-        <h2>Ласкаво просимо до JOSKA DELIVERY</h2>
-        <form>
-          <label for="username">Ім'я користувача:</label><br/>
-          <input type="text" id="username" name="username" required style={{width:'300px', height:'22px'}}></input><br/><br/>
-          <label for="password">Пароль:</label><br/>
-          <input type="password" id="password" name="password" required style={{width:'300px', height:'22px'}}></input><br/><br/>
-          {/* <button type="button">Увійти</button> 
-          {/* <Link to="/myprofile" className='button'>Увійти</Link> */}
-        {/* </form>  */}
-
-        
-     {/* </div> */}
+    
   </div>
   );
 }

@@ -27,8 +27,7 @@ function Register() {
       console.log(response?.data);
       console.log(response?.accessToken);
       console.log(JSON.stringify(response))
-      //clear state and controlled inputs
-      //need value attrib on inputs for this
+ 
       setName('');
       setSurname('');
       setEmail('');

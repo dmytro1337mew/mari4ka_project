@@ -8,6 +8,14 @@ import { useAppDispatch } from './store';
 import { useEffect } from 'react';
 import axios from 'axios';
 function CreateOrder() {
+  function isUserAuthenticated() {
+    const accessToken = localStorage.getItem('accessToken');
+    return !!accessToken; 
+  }
+  if (!isUserAuthenticated()) {
+    // Немає токена, перенаправлення на сторінку авторизації
+    window.location.href = '/login';
+  }
   const accessToken = localStorage.getItem('accessToken');
   const refreshToken = localStorage.getItem('refreshToken');
     const dispatch = useAppDispatch();
@@ -22,13 +30,13 @@ const [data, setData]=useState('');
 const navigate=useNavigate();
       const handleLogout = async () => {
         
-          // Якщо POST-запит виконано успішно, видаляємо кукіс
+          
           localStorage.removeItem('email');
           localStorage.removeItem('accessToken');
           localStorage.removeItem('refreshToken');
-          // Якщо є додаткова логіка для виходу, додайте її тут
+          
       
-          // Перенаправлення користувача на головну сторінку або іншу, де потрібно
+          
           navigate('/');
       };
 
@@ -65,14 +73,14 @@ const navigate=useNavigate();
       const buttonCreateOrder = async () => {
         try {
           const response = await axiosInstance.post('create/', {
-            // дані для створення замовлення
+            
           });
       
           console.log('Order created successfully:', response.data);
-          // Обробляйте відповідь або виконуйте інші дії
+          
         } catch (error) {
           console.error('Error creating order:', error);
-          // Обробляйте помилки або виводьте повідомлення про помилку
+          
         }
       };
   return (
